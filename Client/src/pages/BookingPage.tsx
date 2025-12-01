@@ -238,8 +238,12 @@ export default function BookingPage() {
                     className={`card p-3 text-left transition border hover:-translate-y-0.5 hover:shadow-brand ${state.serviceId === svc.id ? 'border-gold ring-2 ring-gold/30' : 'border-border'}`}
                     onClick={() => {
                       dispatch({ type: 'setService', serviceId: svc.id })
-                      // após selecionar o serviço, rolar suavemente até o final para expor o botão Continuar
+                      // após selecionar o serviço, rolar o MODAL inteiro até o final
                       requestAnimationFrame(() => {
+                        const modalEl = document.getElementById('booking-modal-scroll')
+                        if (modalEl) {
+                          modalEl.scrollTo({ top: modalEl.scrollHeight, behavior: 'smooth' })
+                        }
                         if (scrollRef.current) {
                           scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
                         }
@@ -344,6 +348,10 @@ export default function BookingPage() {
                             if (isPast) return
                             dispatch({ type: 'setDate', date: iso })
                             setTimeout(() => {
+                              const modalEl = document.getElementById('booking-modal-scroll')
+                              if (modalEl) {
+                                modalEl.scrollTo({ top: modalEl.scrollHeight, behavior: 'smooth' })
+                              }
                               if (scrollRef.current) {
                                 scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
                               }
@@ -379,6 +387,10 @@ export default function BookingPage() {
                                   if (cell.isPast) return
                                   dispatch({ type: 'setDate', date: cell.iso })
                                   setTimeout(() => {
+                                    const modalEl = document.getElementById('booking-modal-scroll')
+                                    if (modalEl) {
+                                      modalEl.scrollTo({ top: modalEl.scrollHeight, behavior: 'smooth' })
+                                    }
                                     if (scrollRef.current) {
                                       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
                                     }
@@ -471,7 +483,7 @@ export default function BookingPage() {
             </section>
           )}
 
-          <div className="sticky bottom-0 bg-[#141414] grid grid-cols-2 gap-2 pt-3 md:pt-4 safe-area-bottom">
+          <div className="grid grid-cols-2 gap-2 pt-3 md:pt-4">
             <Button
               variant="outline"
               onClick={prev}

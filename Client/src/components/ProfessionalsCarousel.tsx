@@ -12,7 +12,15 @@ export default function ProfessionalsCarousel({ items, activeId, onSelect }: { i
             }`}
             onClick={() => onSelect(pro)}
           >
-            <div className="h-36 rounded-xl bg-surface border border-border mb-3 grid place-items-center text-muted">Foto</div>
+            <div className="h-44 md:h-48 rounded-xl bg-surface border border-border mb-3 overflow-hidden">
+              <img
+                src="/assets/images/professionals/Pablo Silva.jpg"
+                alt={pro.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
+            </div>
             <div className="font-semibold">{pro.name}</div>
           </button>
         ))}

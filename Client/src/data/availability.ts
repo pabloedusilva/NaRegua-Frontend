@@ -1,9 +1,7 @@
 import { Professional } from '@context/BookingContext'
 
 export const professionals: Professional[] = [
-  { id: '1', name: 'Bruno Silva', specialty: 'Fade e Navalha' },
-  { id: '2', name: 'Marcos Vieira', specialty: 'Degradê, Barba' },
-  { id: '3', name: 'Ana Paula', specialty: 'Cortes modernos' }
+  { id: '1', name: 'Pablo Silva', specialty: 'Barbeiro' }
 ]
 
 export const services = [

@@ -173,15 +173,15 @@ export default function DashboardLayout() {
         {/* Top Bar */}
         <header className="sticky top-0 z-30 bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-border">
           <div className="flex items-center justify-between px-4 md:px-6 py-4">
-            {/* Logo for Mobile */}
+            {/* Logo for Mobile (fixed to assets logo) */}
             <div className="flex items-center gap-3 lg:hidden">
               <img
-                src={(typeof window !== 'undefined' && JSON.parse(localStorage.getItem('barbershop_profile') || '{}')?.logo) || '/assets/images/logos/logo.png'}
-                alt={(typeof window !== 'undefined' && JSON.parse(localStorage.getItem('barbershop_profile') || '{}')?.name) || 'Régua Máxima'}
-                className="w-8 h-8 object-cover rounded-full"
+                src="/assets/images/logos/logo.png"
+                alt="Régua Máxima"
+                className="w-8 h-8 object-contain"
               />
               <div>
-                <h2 className="font-display text-gold text-sm">{(typeof window !== 'undefined' && JSON.parse(localStorage.getItem('barbershop_profile') || '{}')?.name) || 'Régua Máxima'}</h2>
+                <h2 className="font-display text-gold text-sm">Régua Máxima</h2>
               </div>
             </div>
 

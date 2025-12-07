@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { handleImageError } from '../../utils/imageHelpers'
+import ImageWithFallback from '../../components/ui/ImageWithFallback'
 
 // TODO: Backend Integration
 // GET /api/professionals - List all professionals
@@ -153,14 +153,12 @@ export default function Staff() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-delayed">
           {professionals.map((professional) => (
             <div key={professional.id} className="card card-hover text-center">
-              <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-surface border-4 border-gold/20">
-                <img
-                  src={professional.image}
-                  alt={professional.name}
-                  className="w-full h-full object-cover"
-                  onError={handleImageError}
-                />
-              </div>
+              <ImageWithFallback
+                src={professional.image}
+                alt={professional.name}
+                rounded
+                containerClassName="w-32 h-32 mx-auto mb-4 bg-surface border-4 border-gold/20"
+              />
               <h3 className="text-xl font-semibold text-text mb-1">{professional.name}</h3>
               <p className="text-text-dim mb-4">{professional.specialty}</p>
               <div className="flex gap-2 pt-4 border-t border-border">
@@ -214,14 +212,12 @@ export default function Staff() {
               <div className="card">
                 {/* Image Upload */}
                 <div className="flex flex-col items-center mb-6">
-                  <div className="w-40 h-40 mb-4 rounded-full overflow-hidden bg-surface border-4 border-gold/20">
-                    <img
-                      src={formData.imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      onError={handleImageError}
-                    />
-                  </div>
+                  <ImageWithFallback
+                    src={formData.imagePreview}
+                    alt="Preview"
+                    rounded
+                    containerClassName="w-40 h-40 mb-4 bg-surface border-4 border-gold/20"
+                  />
                   <label className="btn btn-outline cursor-pointer">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

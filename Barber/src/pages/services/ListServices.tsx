@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { handleImageError } from '../../utils/imageHelpers'
+import ImageWithFallback from '../../components/ui/ImageWithFallback'
 
 // TODO: Backend Integration
 // GET /api/services - List all services
@@ -186,14 +186,12 @@ export default function ListServices() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-delayed">
           {services.map((service) => (
             <div key={service.id} className="card card-hover group">
-              <div className="aspect-video rounded-xl overflow-hidden mb-4 bg-surface">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  onError={handleImageError}
-                />
-              </div>
+              <ImageWithFallback
+                src={service.image}
+                alt={service.name}
+                containerClassName="aspect-video mb-4 bg-surface"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+              />
               <h3 className="text-xl font-semibold text-text mb-2">{service.name}</h3>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-2xl font-bold text-gold">{formatCurrency(service.price)}</span>
@@ -324,11 +322,10 @@ export default function ListServices() {
                               : 'border-border hover:border-gold/50'
                           }`}
                         >
-                          <img 
-                            src={img} 
-                            alt="" 
-                            className="w-full h-full object-cover"
-                            onError={handleImageError}
+                          <ImageWithFallback
+                            src={img}
+                            alt="Service image"
+                            containerClassName="aspect-square"
                           />
                         </button>
                       ))}

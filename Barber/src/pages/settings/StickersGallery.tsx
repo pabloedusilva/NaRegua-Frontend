@@ -9,15 +9,6 @@ const getStickerFiles = (folderName: string): string[] => {
     barbearia: [],
     bom_dia: [],
     boa_tarde: [
-      '1(1).PNG', '1.PNG', '10(1).PNG', '10.PNG', '11(1).PNG', '11.PNG', '12.PNG', '13.PNG',
-      '14.PNG', '15.PNG', '16.PNG', '17.PNG', '18.PNG', '19.PNG', '2.PNG', '20.PNG', '21.PNG',
-      '22.PNG', '23.PNG', '24.PNG', '25.PNG', '26.PNG', '27.PNG', '28.PNG', '29.PNG', '3.PNG',
-      '30.PNG', '31.PNG', '32.PNG', '33.PNG', '34.PNG', '35.PNG', '36.PNG', '37.PNG', '38.PNG',
-      '4.PNG', '5.PNG', '6.PNG', '7(1).PNG', '7.PNG', '8.PNG', '9.PNG', 'aquele boa tarde.PNG',
-      'BOM DIA - 10.PNG', 'BOM DIA - 12.PNG', 'BOM DIA - 7.PNG', 'Cópia de 1.png', 'Cópia de 2.png',
-      'Cópia de 3.png', 'Cópia de 4.png', 'Cópia de 5.png', 'Cópia de 6.png', 'Cópia de Prancheta 1.png',
-      'Cópia de Prancheta 15.png', 'Cópia de Prancheta 2.png', 'Cópia de Prancheta 3.png',
-      'Cópia de Prancheta 4.png', 'Cópia de Prancheta 5.png', 'Cópia de Prancheta 6.png', 'IMG_4304.PNG'
     ],
     boa_noite: [],
     frases: [],

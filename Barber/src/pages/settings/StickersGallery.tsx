@@ -6,7 +6,7 @@ const getStickerFiles = (folderName: string): string[] => {
   
   // Manually list files for each category
   const filesByCategory: Record<string, string[]> = {
-    barbearia: [],
+    barbearia: Array.from({ length: 231 }, (_, i) => `${i + 1}.png`),
     bom_dia: [],
     boa_tarde: [
       '1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png',

@@ -89,6 +89,18 @@ export default function BookingsList() {
     setFilteredBookings(filtered)
   }
 
+  // Agrupar agendamentos por data
+  const groupedBookings = useMemo(() => {
+    const groups: { [key: string]: Booking[] } = {}
+    filteredBookings.forEach(booking => {
+      if (!groups[booking.date]) {
+        groups[booking.date] = []
+      }
+      groups[booking.date].push(booking)
+    })
+    return groups
+  }, [filteredBookings])
+
   // Próximo agendamento para destaque
   const nextBooking = useMemo(() => {
     const now = new Date()
@@ -166,6 +178,17 @@ export default function BookingsList() {
         </div>
       </div>
     )
+  }
+
+  const formatDisplayDate = (dateStr: string) => {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
   }
 
   return (
@@ -258,6 +281,15 @@ export default function BookingsList() {
         </div>
       </div>
 
+      {/* Data Filtrada em Destaque */}
+      {dateFilter && (
+        <div className="animate-fade-in-delayed">
+          <h2 className="font-display text-2xl md:text-3xl text-gold capitalize">
+            {formatDisplayDate(dateFilter)}
+          </h2>
+        </div>
+      )}
+
       {/* Bookings List - Estilo Cliente */}
       {filteredBookings.length === 0 ? (
         <div className="card text-center py-12">
@@ -269,86 +301,100 @@ export default function BookingsList() {
           <p className="text-text-dim">Nenhum agendamento encontrado</p>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-delayed">
-          {filteredBookings.map((booking) => {
-            const dateObj = new Date(booking.date + 'T' + booking.time)
-            const formattedDate = dateObj.toLocaleDateString('pt-BR', { 
-              day: '2-digit', 
-              month: 'short',
-              year: 'numeric'
-            })
-            
-            const statusConfig = {
-              scheduled: { label: 'Agendado', color: 'text-blue-400', bg: 'bg-blue-400/15 border-blue-400/30' },
-              completed: { label: 'Concluído', color: 'text-green-400', bg: 'bg-green-400/15 border-green-400/30' },
-              cancelled: { label: 'Cancelado', color: 'text-red-400', bg: 'bg-red-400/15 border-red-400/30' }
-            }
-            const status = statusConfig[booking.status]
-            
-            // Destaca apenas o próximo agendamento
-            const isNextBooking = nextBooking?.id === booking.id
-            
-            return (
-              <div
-                key={booking.id}
-                className={`bg-[#141414] border rounded-2xl shadow-[var(--shadow)] p-5 transition ${
-                  isNextBooking ? 'border-gold/30' : 'border-border'
-                } hover:border-gold/30`}
-              >
-                <div className="grid gap-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-lg font-semibold text-text">{booking.time}</div>
-                      <div className="text-sm text-text/70 capitalize">{formattedDate}</div>
-                    </div>
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-medium border ${status.bg} ${status.color}`}>
-                      {status.label}
-                    </span>
-                  </div>
-
-                  <div className="grid gap-1.5 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-text/70">Cliente:</span>
-                      <span className="text-text font-medium">{booking.clientName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-text/70">Telefone:</span>
-                      <span className="text-text font-medium">{booking.clientPhone}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-text/70">Profissional:</span>
-                      <span className="text-text font-medium">{booking.professionalName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-text/70">Serviço:</span>
-                      <span className="text-text font-medium">{booking.serviceName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-text/70">Valor:</span>
-                      <span className="text-gold font-semibold">R$ {booking.price.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-border grid gap-2">
-                    <button
-                      onClick={() => navigate(`/admin/agendamentos/${booking.id}`)}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent text-text border-border transition hover:-translate-y-px w-full"
+        <div className="grid gap-8 animate-fade-in-delayed">
+          {Object.entries(groupedBookings).map(([date, bookingsForDate]) => (
+            <div key={date} className="grid gap-4">
+              {/* Cabeçalho da Data */}
+              {!dateFilter && (
+                <h2 className="font-display text-2xl md:text-3xl text-gold capitalize">
+                  {formatDisplayDate(date)}
+                </h2>
+              )}
+              
+              {/* Cards dos Agendamentos */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {bookingsForDate.map((booking) => {
+                  const dateObj = new Date(booking.date + 'T' + booking.time)
+                  const formattedDate = dateObj.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: 'short',
+                    year: 'numeric'
+                  })
+                  
+                  const statusConfig = {
+                    scheduled: { label: 'Agendado', color: 'text-blue-400', bg: 'bg-blue-400/15 border-blue-400/30' },
+                    completed: { label: 'Concluído', color: 'text-green-400', bg: 'bg-green-400/15 border-green-400/30' },
+                    cancelled: { label: 'Cancelado', color: 'text-red-400', bg: 'bg-red-400/15 border-red-400/30' }
+                  }
+                  const status = statusConfig[booking.status]
+                  
+                  // Destaca apenas o próximo agendamento
+                  const isNextBooking = nextBooking?.id === booking.id
+                  
+                  return (
+                    <div
+                      key={booking.id}
+                      className={`bg-[#141414] border rounded-2xl shadow-[var(--shadow)] p-5 transition ${
+                        isNextBooking ? 'border-gold/30' : 'border-border'
+                      } hover:border-gold/30`}
                     >
-                      Ver detalhes
-                    </button>
-                    {booking.status === 'scheduled' && (
-                      <button
-                        onClick={() => handleCancelBooking(booking.id)}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent border-red-400/30 text-red-400 hover:bg-red-400/10 hover:border-red-400 transition hover:-translate-y-px w-full"
-                      >
-                        Cancelar agendamento
-                      </button>
-                    )}
-                  </div>
-                </div>
+                      <div className="grid gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-lg font-semibold text-text">{booking.time}</div>
+                            <div className="text-sm text-text/70 capitalize">{formattedDate}</div>
+                          </div>
+                          <span className={`px-2.5 py-1 rounded-lg text-xs font-medium border ${status.bg} ${status.color}`}>
+                            {status.label}
+                          </span>
+                        </div>
+
+                        <div className="grid gap-1.5 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-text/70">Cliente:</span>
+                            <span className="text-text font-medium">{booking.clientName}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text/70">Telefone:</span>
+                            <span className="text-text font-medium">{booking.clientPhone}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text/70">Profissional:</span>
+                            <span className="text-text font-medium">{booking.professionalName}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text/70">Serviço:</span>
+                            <span className="text-text font-medium">{booking.serviceName}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text/70">Valor:</span>
+                            <span className="text-gold font-semibold">R$ {booking.price.toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-border grid gap-2">
+                          <button
+                            onClick={() => navigate(`/admin/agendamentos/${booking.id}`)}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent text-text border-border transition hover:-translate-y-px w-full"
+                          >
+                            Ver detalhes
+                          </button>
+                          {booking.status === 'scheduled' && (
+                            <button
+                              onClick={() => handleCancelBooking(booking.id)}
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent border-red-400/30 text-red-400 hover:bg-red-400/10 hover:border-red-400 transition hover:-translate-y-px w-full"
+                            >
+                              Cancelar agendamento
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       )}
 

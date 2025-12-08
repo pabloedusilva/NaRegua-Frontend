@@ -33,11 +33,13 @@ const getStickerFiles = (folderName: string): string[] => {
       '131.png', '132.png', '133.png', '134.png', '135.png'
     ],
     frases: [],
-    favela: [],
+    favela: [
+      '1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png',
+      '11.png', '12.png', '13.png', '14.png', '15.png', '16.png', '17.png'
+    ],
     animadas: [
       '1.GIF', '2.GIF', '3.GIF', '4.GIF', '5.GIF', '6.GIF', '7.GIF', '8.GIF', '9.GIF', '10.GIF',
-      '11.GIF', '12.GIF', '13.GIF', '14.GIF', '15.GIF', '16.GIF', '17.GIF', '18.GIF', '19.GIF', '20.GIF',
-      '21.GIF', '22.GIF'
+      '11.GIF', '12.GIF', '13.GIF', '14.GIF', '15.GIF', '16.GIF', '17.GIF', '18.GIF'
     ]
   }
   

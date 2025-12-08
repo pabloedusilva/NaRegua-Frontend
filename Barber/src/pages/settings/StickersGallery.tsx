@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // Helper function to generate file paths based on known file names
 const getStickerFiles = (folderName: string): string[] => {
@@ -14,7 +14,7 @@ const getStickerFiles = (folderName: string): string[] => {
       '21.png', '22.png', '23.png', '24.png', '25.png', '26.png', '27.png', '28.png', '29.png', '30.png',
       '31.png', '32.png', '33.png', '34.png', '35.png', '36.png', '37.png', '38.png', '39.png', '40.png',
       '41.png', '42.png', '43.png', '44.png', '45.png', '46.png', '47.png', '48.png', '49.png', '50.png',
-      '51.png', '52.png', '53.png', '54.png', '55.png'
+      '51.png', '52.png', '53.png', '54.png'
     ],
     boa_noite: [],
     frases: [],
@@ -28,67 +28,36 @@ const getStickerFiles = (folderName: string): string[] => {
 
 // Sticker categories organized by folder names
 const STICKER_CATEGORIES = {
+  favoritos: {
+    name: 'Favoritos',
+    files: [] // Will be populated from localStorage
+  },
   barbearia: {
     name: 'Barbearia',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
-      </svg>
-    ),
     files: getStickerFiles('barbearia')
   },
   bom_dia: {
     name: 'Bom Dia',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
     files: getStickerFiles('bom_dia')
   },
   boa_tarde: {
     name: 'Boa Tarde',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
     files: getStickerFiles('boa_tarde')
   },
   boa_noite: {
     name: 'Boa Noite',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
-    ),
     files: getStickerFiles('boa_noite')
   },
   frases: {
     name: 'Frases',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-      </svg>
-    ),
     files: getStickerFiles('frases')
   },
   favela: {
     name: 'Favela',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
     files: getStickerFiles('favela')
   },
   animadas: {
     name: 'Animadas',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-      </svg>
-    ),
     files: getStickerFiles('animadas')
   }
 }
@@ -96,9 +65,40 @@ const STICKER_CATEGORIES = {
 type CategoryKey = keyof typeof STICKER_CATEGORIES
 
 export default function StickersGallery() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('barbearia')
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('favoritos')
   const [copiedSticker, setCopiedSticker] = useState<string | null>(null)
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null)
+  const [favorites, setFavorites] = useState<string[]>([])
+
+  // Load favorites from localStorage
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('sticker_favorites')
+    if (savedFavorites) {
+      try {
+        setFavorites(JSON.parse(savedFavorites))
+      } catch (error) {
+        console.error('Erro ao carregar favoritos:', error)
+      }
+    }
+  }, [])
+
+  // Save favorites to localStorage
+  useEffect(() => {
+    localStorage.setItem('sticker_favorites', JSON.stringify(favorites))
+  }, [favorites])
+
+  const toggleFavorite = (sticker: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setFavorites(prev => {
+      if (prev.includes(sticker)) {
+        return prev.filter(s => s !== sticker)
+      } else {
+        return [...prev, sticker]
+      }
+    })
+  }
+
+  const isFavorite = (sticker: string) => favorites.includes(sticker)
 
   const handleStickerClick = (sticker: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -196,14 +196,15 @@ export default function StickersGallery() {
   }
 
   const currentCategory = STICKER_CATEGORIES[selectedCategory]
-  const hasStickers = currentCategory.files.length > 0
+  const displayStickers = selectedCategory === 'favoritos' ? favorites : currentCategory.files
+  const hasStickers = displayStickers.length > 0
 
   return (
     <div className="grid gap-8">
       {/* Header */}
       <div className="animate-fade-in">
         <h1 className="font-display text-4xl md:text-5xl text-gold mb-2">Galeria de Figurinhas</h1>
-        <p className="text-text-dim">Clique na figurinha para selecionar, depois clique no botão para copiar</p>
+        <p className="text-text-dim">Clique na estrela para favoritar, clique na figurinha para copiar</p>
       </div>
 
       {/* Category Tabs */}
@@ -229,14 +230,22 @@ export default function StickersGallery() {
           <div className="card text-center py-12">
             <div className="w-16 h-16 rounded-full bg-surface border border-border flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                {selectedCategory === 'favoritos' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                )}
               </svg>
             </div>
-            <p className="text-text-dim">Nenhuma figurinha nesta categoria</p>
+            <p className="text-text-dim">
+              {selectedCategory === 'favoritos' 
+                ? 'Nenhuma figurinha favoritada ainda'
+                : 'Nenhuma figurinha nesta categoria'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 animate-fade-in">
-            {currentCategory.files.map((sticker, index) => (
+            {displayStickers.map((sticker, index) => (
               <div
                 key={index}
                 className="group relative aspect-square rounded-xl overflow-hidden bg-surface border border-border hover:border-gold/50 transition-all cursor-pointer"
@@ -245,13 +254,29 @@ export default function StickersGallery() {
                 {/* Sticker Image */}
                 <img
                   src={sticker}
-                  alt={`${currentCategory.name} ${index + 1}`}
+                  alt={`Figurinha ${index + 1}`}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                     target.src = '/assets/images/ui/default.jpg'
                   }}
                 />
+
+                {/* Favorite Button - Top Right */}
+                <button
+                  onClick={(e) => toggleFavorite(sticker, e)}
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/80 hover:scale-110 z-10"
+                >
+                  {isFavorite(sticker) ? (
+                    <svg className="w-5 h-5 text-gold fill-gold" viewBox="0 0 24 24">
+                      <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  )}
+                </button>
 
                 {/* Overlay - Mostra quando selecionado ou hover */}
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 flex items-center justify-center ${

@@ -55,7 +55,6 @@ export default function BookingPage() {
     x.setDate(x.getDate() + n)
     return x
   }
-  const startOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1)
   const addMonths = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth() + n, 1)
   const getSundayOfWeek = (d: Date) => {
     const dayOfWeek = d.getDay()

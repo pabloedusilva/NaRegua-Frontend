@@ -11,7 +11,7 @@ import MyBookingsPage from './MyBookingsPage'
  */
 export default function MyBookingsModal() {
   const navigate = useNavigate()
-  const { userPhone, setUserPhone } = useMyBookings()
+  const { setUserPhone } = useMyBookings()
   const [showVerification, setShowVerification] = useState(true)
 
   // Check if user already has phone stored

@@ -1,11 +1,13 @@
 # Dependencies
 node_modules/
+*/node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
 # Build outputs
 dist/
+*/dist/
 build/
 *.local
 
@@ -50,6 +52,7 @@ Desktop.ini
 .parcel-cache/
 .eslintcache
 .stylelintcache
+.vite/
 
 # Temporary files
 *.tmp

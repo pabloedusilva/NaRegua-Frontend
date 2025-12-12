@@ -1,5 +1,5 @@
-// Global Service Worker - Régua Máxima
-const CACHE_NAME = 'regua-maxima-global-v1'
+// Service Worker para Régua Máxima - Barber App
+const CACHE_NAME = 'regua-maxima-barber-v1'
 
 const ESSENTIAL_ASSETS = [
   '/',
@@ -10,13 +10,18 @@ const ESSENTIAL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ESSENTIAL_ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(ESSENTIAL_ASSETS.map(url => new Request(url, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
+      .catch((error) => console.error('[SW] Install failed:', error))
   )
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((names) => Promise.all(names.map((n) => (n === CACHE_NAME ? undefined : caches.delete(n))))).then(() => self.clients.claim())
+    caches.keys()
+      .then((names) => Promise.all(names.map((n) => (n === CACHE_NAME ? undefined : caches.delete(n)))))
+      .then(() => self.clients.claim())
   )
 })
 
@@ -41,7 +46,11 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cached) => {
       if (cached) {
         fetch(request)
-          .then((response) => caches.open(CACHE_NAME).then((cache) => cache.put(request, response)))
+          .then((response) => {
+            if (response.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, response))
+            }
+          })
           .catch(() => {})
         return cached
       }
@@ -54,4 +63,13 @@ self.addEventListener('fetch', (event) => {
       })
     })
   )
+})
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+  if (event.data?.type === 'CLEAR_CACHE') {
+    caches.delete(CACHE_NAME)
+  }
 })

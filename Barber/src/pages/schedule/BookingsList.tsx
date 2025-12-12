@@ -375,7 +375,7 @@ export default function BookingsList() {
 
                         <div className="pt-2 border-t border-border grid gap-2">
                           <button
-                            onClick={() => navigate(`/admin/agendamentos/${booking.id}`)}
+                            onClick={() => navigate(`/agendamentos/${booking.id}`)}
                             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent text-text border-border transition hover:-translate-y-px w-full"
                           >
                             Ver detalhes

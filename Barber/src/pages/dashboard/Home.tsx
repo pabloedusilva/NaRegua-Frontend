@@ -253,7 +253,7 @@ export default function DashboardHome() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-text">Agendamentos de Hoje</h2>
           <button
-            onClick={() => navigate('/admin/agendamentos')}
+            onClick={() => navigate('/agendamentos')}
             className="text-gold hover:text-gold-600 text-sm font-semibold flex items-center gap-1 transition-colors"
           >
             Ver todos
@@ -328,7 +328,7 @@ export default function DashboardHome() {
 
                     <div className="pt-2 border-t border-border grid gap-2">
                       <button
-                        onClick={() => navigate(`/admin/agendamentos/${booking.id}`)}
+                        onClick={() => navigate(`/agendamentos/${booking.id}`)}
                         className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-semibold border bg-transparent text-text border-border transition hover:-translate-y-px w-full"
                       >
                         Ver detalhes

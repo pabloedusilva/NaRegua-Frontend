@@ -18,7 +18,7 @@ export default function LoginForm() {
     if (rememberMe) {
       localStorage.setItem('barber_remember', 'true')
     }
-    navigate('/admin/dashboard')
+    navigate('/dashboard')
   }
 
   return (

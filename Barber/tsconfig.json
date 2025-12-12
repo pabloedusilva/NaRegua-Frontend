@@ -7,8 +7,8 @@
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
-    "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
@@ -17,16 +17,10 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./Client/src/*"],
-      "@client/*": ["./Client/src/*"],
-      "@barber/*": ["./Barber/src/*"],
-      "@components/*": ["./Client/src/components/*"],
-      "@context/*": ["./Client/src/context/*"],
-      "@data/*": ["./Client/src/data/*"],
-      "@types/*": ["./Client/src/types/*"],
-      "@utils/*": ["./Client/src/utils/*"],
-      "@pages/*": ["./Client/src/pages/*"]
+      "@/*": ["./src/*"],
+      "@barber/*": ["./src/*"]
     }
   },
-  "include": ["Client/src", "Barber/src", "src"]
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

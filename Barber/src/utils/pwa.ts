@@ -149,13 +149,6 @@ export const initPWA = () => {
   setupDynamicViewport();
   preventMobileBehaviors();
   
-  // Esconde splash após carregamento completo
-  if (document.readyState === 'complete') {
-    hideSplashScreen();
-  } else {
-    window.addEventListener('load', hideSplashScreen);
-  }
-  
   // Log para debug
   if (process.env.NODE_ENV === 'development') {
     console.log('[PWA] Standalone:', isStandalone());

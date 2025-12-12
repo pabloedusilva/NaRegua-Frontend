@@ -61,7 +61,7 @@ export default function App() {
       </Route>
 
       {/* Redirect empty path to dashboard */}
-      <Route index element={<Navigate to="/admin/dashboard" replace />} />
+      <Route index element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Download, Smartphone, X } from 'lucide-react';
+import { isIOS } from '@barber/utils/pwa';
 
 interface InstallPWAModalProps {
   isOpen: boolean;
@@ -168,7 +169,12 @@ export default function InstallPWAModal({ isOpen, onClose, onInstall, canInstall
                 {canInstall ? (
                   <>
                     <Download className="w-5 h-5" />
-                    Baixar
+                    Instalar App
+                  </>
+                ) : isIOS() && !canInstall ? (
+                  <>
+                    <Download className="w-5 h-5" />
+                    Baixar App
                   </>
                 ) : (
                   <>

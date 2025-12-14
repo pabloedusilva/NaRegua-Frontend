@@ -573,40 +573,18 @@ export default function PromotionsList() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Input
-                        label="Data de Início (opcional)"
-                        type="date"
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      />
-                      {formData.startDate && (
-                        <button
-                          type="button"
-                          onClick={() => setFormData({ ...formData, startDate: '' })}
-                          className="-mt-4 text-xs text-text-dim hover:text-gold transition-colors"
-                        >
-                          Limpar
-                        </button>
-                      )}
-                    </div>
-                    <div>
-                      <Input
-                        label="Data de Término (opcional)"
-                        type="date"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                      />
-                      {formData.endDate && (
-                        <button
-                          type="button"
-                          onClick={() => setFormData({ ...formData, endDate: '' })}
-                          className="-mt-4 text-xs text-text-dim hover:text-gold transition-colors"
-                        >
-                          Limpar
-                        </button>
-                      )}
-                    </div>
+                    <Input
+                      label="Data de Início (opcional)"
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    />
+                    <Input
+                      label="Data de Término (opcional)"
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 gap-6">

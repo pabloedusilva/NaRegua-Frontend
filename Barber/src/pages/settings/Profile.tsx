@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Trash2 } from 'lucide-react'
 // image fallback handled via ImageWithFallback
 import { formatPhone } from '../../utils/format'
 
@@ -40,10 +41,16 @@ export default function Profile() {
   const [tempProfile, setTempProfile] = useState(profile)
   const [logoPreview, setLogoPreview] = useState('')
   const [showAvatarGallery, setShowAvatarGallery] = useState(false)
+  const [cacheSize, setCacheSize] = useState<number>(0)
+  const [isCalculatingCache, setIsCalculatingCache] = useState(false)
+  const [isClearingCache, setIsClearingCache] = useState(false)
+  const [showClearCacheModal, setShowClearCacheModal] = useState(false)
+  const [showCacheSuccessModal, setShowCacheSuccessModal] = useState(false)
 
   useEffect(() => {
     document.title = 'Régua Máxima | Dashboard Barbeiro';
     loadProfile()
+    calculateCacheSize()
   }, [])
 
   const loadProfile = () => {
@@ -78,6 +85,42 @@ export default function Profile() {
     setLogoPreview(avatarUrl)
     setTempProfile({ ...tempProfile, logo: avatarUrl })
     setShowAvatarGallery(false)
+  }
+
+  const calculateCacheSize = async () => {
+    setIsCalculatingCache(true)
+    try {
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        const estimate = await navigator.storage.estimate()
+        const usageInMB = (estimate.usage || 0) / (1024 * 1024)
+        setCacheSize(usageInMB)
+      }
+    } catch (error) {
+      console.error('Erro ao calcular tamanho do cache:', error)
+    } finally {
+      setIsCalculatingCache(false)
+    }
+  }
+
+  const handleClearCache = async () => {
+    setIsClearingCache(true)
+    try {
+      // Limpa todos os caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys()
+        await Promise.all(cacheNames.map(name => caches.delete(name)))
+      }
+
+      // Recalcula o tamanho
+      await calculateCacheSize()
+
+      setShowClearCacheModal(false)
+      setShowCacheSuccessModal(true)
+    } catch (error) {
+      console.error('Erro ao limpar cache:', error)
+    } finally {
+      setIsClearingCache(false)
+    }
   }
 
   const handleSave = () => {
@@ -207,6 +250,46 @@ export default function Profile() {
         <div className="card md:col-span-2">
           <h3 className="text-lg font-semibold text-text mb-4">Descrição</h3>
           <p className="text-text-dim leading-relaxed">{profile.description}</p>
+        </div>
+      </div>
+
+      {/* Cache Management Section */}
+      <div className="animate-fade-in-delayed">
+        <h2 className="text-2xl font-bold text-text mb-4">Armazenamento e Cache</h2>
+        <div className="card">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-text">Cache do Navegador</h3>
+                  <p className="text-sm text-text-dim">
+                    {isCalculatingCache ? (
+                      'Calculando...'
+                    ) : (
+                      `${cacheSize.toFixed(2)} MB armazenados`
+                    )}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-text-dim mt-2">
+                O cache armazena dados localmente para melhorar o desempenho do aplicativo. 
+                Limpar o cache pode resolver problemas, mas fará o app carregar mais devagar na próxima vez.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowClearCacheModal(true)}
+              disabled={isClearingCache || isCalculatingCache}
+              className="btn btn-outline text-red-400 border-red-500/20 hover:bg-red-500/10 flex items-center justify-center gap-2 w-full sm:w-auto sm:shrink-0"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Limpar Cache</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -371,6 +454,66 @@ export default function Profile() {
                   {isSaving ? 'Salvando...' : 'Salvar Alterações'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Cache Confirmation Modal */}
+      {showClearCacheModal && (
+        <div className="modal-overlay" onClick={() => setShowClearCacheModal(false)}>
+          <div className="modal-content p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-semibold text-text mb-4">Limpar Cache</h3>
+            <p className="text-text-dim mb-6">
+              Tem certeza que deseja limpar o cache? Isso pode fazer com que o aplicativo carregue mais devagar na próxima vez.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowClearCacheModal(false)}
+                className="btn btn-outline flex-1"
+                disabled={isClearingCache}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleClearCache}
+                className="btn btn-danger flex-1"
+                disabled={isClearingCache}
+              >
+                {isClearingCache ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Limpando...
+                  </>
+                ) : (
+                  'Limpar Cache'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cache Success Modal */}
+      {showCacheSuccessModal && (
+        <div className="modal-overlay" onClick={() => setShowCacheSuccessModal(false)}>
+          <div className="modal-content p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-500 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-text mb-2">Cache Limpo!</h3>
+              <p className="text-text-dim mb-6">
+                O cache foi limpo com sucesso. Agora você tem {cacheSize.toFixed(2)} MB armazenados.
+              </p>
+              <button
+                onClick={() => setShowCacheSuccessModal(false)}
+                className="btn btn-primary w-full"
+              >
+                Fechar
+              </button>
             </div>
           </div>
         </div>
